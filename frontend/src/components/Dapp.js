@@ -1,12 +1,14 @@
 import React from "react";
+import { useCallback, useEffect, useState } from 'react';
+
 
 // We'll use ethers to interact with the Ethereum network and our contract
 import { ethers } from "ethers";
 
 // We import the contract's artifacts and address here, as we are going to be
 // using them with ethers
-import TokenArtifact from "../contracts/Token.json";
-import contractAddress from "../contracts/contract-address.json";
+// import TokenArtifact from "../contracts/Token.json";
+// import contractAddress from "../contracts/contract-address.json";
 
 // All the logic of this dapp is contained in the Dapp component.
 // These other components are just presentational ones: they don't have any
@@ -38,10 +40,37 @@ const ERROR_CODE_TX_REJECTED_BY_USER = 4001;
 // Note that (3) and (4) are specific of this sample application, but they show
 // you how to keep your Dapp and contract's state in sync,  and how to send a
 // transaction.
+
+// function useContractConfig(deployments,provider){
+//   const [contractConfig,setContractConfig] = useState({})
+//   useEffect(async ()=>{
+//     const network = await provider.getNetwork()
+//     const configs = deployments[network.chainId][0]
+//     let contracts = {}
+//     for(let i in configs['contracts']){
+//       contracts[i] = new ethers.Contract(configs['contracts'][i]['address'],configs['contracts'][i]['abi'],provider)
+//     }
+//     setContractConfig(contracts)
+//   },[provider,deployments])
+//   return contractConfig
+// }
+
+function getContracts(deployments,signer,chainId){
+  console.log(deployments,chainId)
+  let contracts = {}
+  if(!deployments[chainId]){
+    return contracts
+  }
+  const configs = deployments[chainId][0]
+  for(let i in configs['contracts']){
+    contracts[i] = new ethers.Contract(configs['contracts'][i]['address'],configs['contracts'][i]['abi'],signer)
+  }
+  return contracts
+}
 export class Dapp extends React.Component {
   constructor(props) {
     super(props);
-
+    
     // We store multiple things in Dapp's state.
     // You don't need to follow this pattern, but it's an useful example.
     this.initialState = {
@@ -54,6 +83,7 @@ export class Dapp extends React.Component {
       txBeingSent: undefined,
       transactionError: undefined,
       networkError: undefined,
+      deployments:props.deployments
     };
 
     this.state = this.initialState;
@@ -174,7 +204,13 @@ export class Dapp extends React.Component {
 
     // To connect to the user's wallet, we have to run this method.
     // It returns a promise that will resolve to the user's address.
-    const [selectedAddress] = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    await provider.send("eth_requestAccounts", []);
+
+    const network = await provider.getNetwork()
+    this.setState({'provider':provider,'chainId':network['chainId']})
+    const signer = provider.getSigner();
+    const selectedAddress = await signer.getAddress()
 
     // Once we have the address, we can initialize the application.
 
@@ -183,10 +219,14 @@ export class Dapp extends React.Component {
       return;
     }
 
+    const c = getContracts(this.props.deployments,signer,network['chainId'])
+    this.setState({'contracts':c})
+
     this._initialize(selectedAddress);
 
     // We reinitialize it whenever the user changes their account.
     window.ethereum.on("accountsChanged", ([newAddress]) => {
+      console.log("account changed")
       this._stopPollingData();
       // `accountsChanged` event can be triggered with an undefined newAddress.
       // This happens when the user removes the Dapp from the "Connected
@@ -201,6 +241,7 @@ export class Dapp extends React.Component {
     
     // We reset the dapp state if the network is changed
     window.ethereum.on("chainChanged", ([networkId]) => {
+      console.log("chain changed")
       this._stopPollingData();
       this._resetState();
     });
@@ -230,11 +271,7 @@ export class Dapp extends React.Component {
 
     // Then, we initialize the contract using that provider and the token's
     // artifact. You can do this same thing with your contracts.
-    this._token = new ethers.Contract(
-      contractAddress.Token,
-      TokenArtifact.abi,
-      this._provider.getSigner(0)
-    );
+    this._token = this.state.contracts.Token
   }
 
   // The next two methods are needed to start and stop polling data. While
@@ -357,14 +394,16 @@ export class Dapp extends React.Component {
 
   // This method checks if Metamask selected network is Localhost:8545 
   _checkNetwork() {
-    if (window.ethereum.networkVersion === HARDHAT_NETWORK_ID) {
-      return true;
-    }
+    // console.log(window.ethereum)
+    return true
+    // if (window.ethereum.networkVersion === HARDHAT_NETWORK_ID) {
+    //   return true;
+    // }
 
-    this.setState({ 
-      networkError: 'Please connect Metamask to Localhost:8545'
-    });
+    // this.setState({ 
+    //   networkError: 'Please connect Metamask to Localhost:8545'
+    // });
 
-    return false;
+    // return false;
   }
 }
