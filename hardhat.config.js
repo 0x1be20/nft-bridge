@@ -1,4 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
+require("@nomiclabs/hardhat-ethers")
+require('hardhat-deploy');
 
 // The next line is part of the sample project, you don't need it in your
 // project. It imports a Hardhat task definition, that can be used for
@@ -12,5 +14,10 @@ module.exports = {
     hardhat: {
       chainId: 31337
     }
-  }
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0, // here this will by default take the first account as deployer
+    },
+  },
 };

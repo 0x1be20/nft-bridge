@@ -6,7 +6,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "hardhat test"
+    "test": "hardhat test",
+    "deploy":"hardhat deploy --export-all ./frontend/src/contracts/hardhat_contracts.json"
   },
   "repository": {
     "type": "git",
@@ -24,12 +25,13 @@
   },
   "homepage": "https://github.com/nomiclabs/hardhat-hackathon-boilerplate#readme",
   "devDependencies": {
-    "@nomiclabs/hardhat-ethers": "^2.0.2",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
     "chai": "^4.2.0",
     "ethereum-waffle": "^3.1.1",
-    "ethers": "^5.0.0",
+    "ethers": "^5.5.4",
     "hardhat": "^2.3.0",
+    "hardhat-deploy": "^0.10.5",
     "husky": "^4.2.5"
   }
 }
