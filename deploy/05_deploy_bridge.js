@@ -6,6 +6,7 @@ const {ethers} = require("hardhat")
 module.exports = async({getNamedAccounts,deployments,getChainId})=>{
     const {deploy} = deployments;
     const {deployer} = await getNamedAccounts()
+    console.log('deployer',deployer)
     const dist = "0x9e52e12Ac3F2D0AE08BB1108CCb761B80Cd24728";
 
     await deploy("NftBridge",{
@@ -13,6 +14,7 @@ module.exports = async({getNamedAccounts,deployments,getChainId})=>{
         args:[1,2],
         log:true,
     });
+
 
     const bridge = await ethers.getContract("NftBridge",deployer)
     
@@ -41,4 +43,4 @@ module.exports = async({getNamedAccounts,deployments,getChainId})=>{
     // });
 }
 
-module.exports.tags = ["Nft"];
+module.exports.tags = ["Bridge"];

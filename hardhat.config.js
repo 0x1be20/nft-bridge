@@ -1,6 +1,8 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-ethers")
 require('hardhat-deploy');
+const { readdir }=require('fs/promises');
+
 const fs = require("fs");
 
 
@@ -52,8 +54,12 @@ module.exports = {
     solcVersion: "0.7.6",
   },
   networks: {
-    hardhat: {
-      chainId: 31337
+    localhost: {
+      chainId: 31337,
+      url:'http://localhost:8545',
+      accounts:{
+        mnemonic:mnemonic()
+      }
     },
     ganache:{
       chainId:1337,
@@ -69,3 +75,23 @@ module.exports = {
     },
   },
 };
+
+task("copy", "copy compiled contracts to frontend dir")
+  .setAction(async (taskArgs) => {
+
+    try {
+      const baseDir = "artifacts/contracts";
+      const files = await readdir(baseDir);
+      for (const file of files){
+        const name = file.split(".sol",2)[0]
+        const contracts = await readdir(baseDir+"/"+file)
+        for (const contract of contracts){
+          if(contract==`${name}.json`){
+            fs.copyFileSync(`${baseDir}/${file}/${name}.json`,`frontend/src/contracts/${name}.json`)
+          }
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });

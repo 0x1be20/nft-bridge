@@ -13,11 +13,15 @@ contract Nft is ERC721,ERC721Enumerable,Ownable,ERC721URIStorage{
 
     constructor(string memory collectionName,string memory _symbol)ERC721(collectionName,_symbol){}
 
+    function setBaseURI(string memory _baseURI)onlyOwner public {
+        baseURI = _baseURI;
+    }
+
     function _baseURI() internal view override returns(string memory){
         return baseURI;
     }
 
-    function mintItem(address to,string memory uri)public returns(uint256){
+    function mintItem(address to,string memory uri)public virtual returns(uint256){
         _tokenIdCounter.increment();
         uint256 tokenId = _tokenIdCounter.current();
         _safeMint(to,tokenId);

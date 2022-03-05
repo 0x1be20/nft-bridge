@@ -9,7 +9,7 @@ module.exports = async({getNamedAccounts,deployments,getChainId})=>{
     const dist = "0x9e52e12Ac3F2D0AE08BB1108CCb761B80Cd24728";
     await deploy("Token",{
         from:deployer,
-        args:["Token","TNK",ethers.utils.parseEther("1000")]
+        args:["Token","TNK",ethers.utils.parseEther("10000")]
     })
     const token = await ethers.getContract("Token",deployer);
     await token.approve(deployer,toWei(100))

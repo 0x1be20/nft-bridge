@@ -1,6 +1,9 @@
 const {ethers} = require("hardhat")
 // const {create} = require('ipfs-http-client')
+// const ipfsClient = require('ipfs-http-client')
 
+// connect to ipfs daemon API server
+// const ipfs = ipfsClient('https://infura-ipfs.io:5001') // (the default in Node.js)
 // const ipfs = create("https://infura-ipfs.io:5001")
 
 module.exports = async({getNamedAccounts,deployments,getChainId})=>{
@@ -8,13 +11,14 @@ module.exports = async({getNamedAccounts,deployments,getChainId})=>{
     const {deployer} = await getNamedAccounts()
     const dist = "0x9e52e12Ac3F2D0AE08BB1108CCb761B80Cd24728";
 
-    await deploy("Nft",{
+    await deploy("NftFactory",{
         from:deployer,
-        args:["Nft1","NFT1"],
+        args:[],
         log:true,
     });
 
-    const nft1 = await ethers.getContract("Nft",deployer);
+    const nftFactory = await ethers.getContract("NftFactory",deployer);
+    // await nft1.setBaseURI(`http://127.0.0.1:7001/collections/${nft1.address}/items/`)
     
     // const item1 = {
     //     "name": "NFT item1",
@@ -33,11 +37,14 @@ module.exports = async({getNamedAccounts,deployments,getChainId})=>{
     //     ]
     // }
 
+    // const file = (ipfs.add(JSON.stringify(item1)))
+
+    // console.log('arr',await file[0])
     // const uploaded = await ipfs.add(JSON.stringify(item1))
-    // console.log("ipfs path",uploaded.path)
-    // await nft1.mintItem(dist,uploaded.path,{
+    // console.log("ipfs path",uploaded)
+    // await nft1.mintItem(dist,"1",{
     //     gasLimit:400000,
     // });
 }
 
-module.exports.tags = ["Nft"];
+module.exports.tags = ["NftFactory"];

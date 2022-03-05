@@ -13,4 +13,4 @@ module.exports = async({getNamedAccounts,deployments,getChainId})=>{
     }
 }
 
-module.exports.tags = ["Factory"];
+module.exports.tags = ["Exchange"];
