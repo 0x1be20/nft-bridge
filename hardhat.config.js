@@ -67,6 +67,20 @@ module.exports = {
       accounts:{
         mnemonic:mnemonic()
       }
+    },
+    ftmtest:{
+      url:'https://xapi.testnet.fantom.network/lachesis',
+      chainId:4002,
+      accounts:{
+        mnemonic:mnemonic()
+      }
+    },
+    bsctest:{
+      url:"https://data-seed-prebsc-1-s1.binance.org:8545/",
+      chainId:97,
+      accounts:{
+        mnemonic:mnemonic()
+      }
     }
   },
   namedAccounts: {
