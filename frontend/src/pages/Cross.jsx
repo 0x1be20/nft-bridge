@@ -28,7 +28,7 @@ const Cross = props=>{
             await checkDist(selectedNft)
         }
         c()
-    },[props.nfts,selectedNft])
+    },[props.nfts,selectedNft,selectedChain])
 
     const opts = nfts&&nfts.map((item,index)=>{
         const meta = JSON.parse(item.meta)
@@ -131,11 +131,11 @@ const Cross = props=>{
                 <Row justify='left'>
                 {card}
                 </Row>
-                {/* <Row justify='left' style={{marginTop:"20px"}}>
+                <Row justify='left' style={{marginTop:"20px"}}>
                     <Select style={{width:300}} onChange={value=>setSelectedChain(value)}>
                         {chainOpts}
                     </Select>
-                </Row> */}
+                </Row>
             </Col>
         </Row>
         <Row justify='center' style={{marginTop:"20px"}}>
