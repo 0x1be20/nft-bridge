@@ -28,17 +28,17 @@ const Info = props=>{
         使用账户 Private Key: <Text mark copyable>0x211addeb38e18b96b55225248ef21652033dbfd9638a582f0ba97c627a1fef0f</Text>
     </Paragraph>
     <Paragraph>
-        NFT铸造链: name: ganache chainID: 1337 rpc:<Text copyable>http://127.0.0.1:7545</Text>
+        NFT铸造链: name: BSC Testnet chainID: 97 rpc:<Text copyable>https://data-seed-prebsc-1-s1.binance.org:8545/</Text>
     </Paragraph>
     <Paragraph>
-        跨链目标链: name: localhost chainID: 31227 rpc:<Text copyable>http://127.0.0.1:8545</Text>
+        跨链目标链: name: Fantom Testnet chainID: 4002 rpc:<Text copyable>https://xapi.testnet.fantom.network/lachesis</Text>
     </Paragraph>
     <Paragraph>
         在铸造链上进行跨链之后，需要切换到目标网络，通过Listing按钮，把wNFT的地址（已经拷贝在剪切板，Ctrl+V就可以粘贴）粘贴导入就可以看到跨链过来的NFT。
     </Paragraph>
     <Title level={2}>项目说明</Title>
     <Paragraph>
-        Github repos:<Link href="" target="_blank" >NFTBridge</Link>
+        Github repos:<Link href="https://github.com/0x1be20/nft-bridge" target="_blank" >NFTBridge</Link>
     </Paragraph>
     <Paragraph>
         项目源代码分为四个部分，分别是合约代码(<Text code>contracts/</Text>)、用户前端(<Text code>frontend/</Text>)、数据索引后端(<Text code>backend/</Text>)以及bridge节点代码(<Text code>node/</Text>)。为了演示效果，代码也提供了一个创建NFT的工具，在演示的时候能够简单的创建自己的NFT合集，Mint NFT。

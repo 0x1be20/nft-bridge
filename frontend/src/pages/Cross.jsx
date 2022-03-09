@@ -38,10 +38,14 @@ const Cross = props=>{
     async function transfer(){
         const signer = await props.provider.getSigner()
         const address = await signer.getAddress()
+        setLoading(true)
         const nft = new ethers.Contract(nfts[selectedNft].collection.address,IERC721.abi,signer)
         console.log('tokenid',nfts[selectedNft].tokenid,selectedNft,nfts)
-        await nft.approve(props.contracts.NftBridge.address,nfts[selectedNft].tokenid)
-        await props.contracts.NftBridge.deposit(nfts[selectedNft].collection.address,nfts[selectedNft].tokenid,address)
+        const trans = await nft.approve(props.contracts.NftBridge.address,nfts[selectedNft].tokenid)
+        await trans.wait()
+        const trans2 = await props.contracts.NftBridge.deposit(nfts[selectedNft].collection.address,nfts[selectedNft].tokenid,address)
+        await trans2.wait()
+        setLoading(false)
     }
 
     async function checkDist(index){

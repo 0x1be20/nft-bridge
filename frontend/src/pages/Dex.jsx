@@ -36,8 +36,32 @@ const Dex = props=>{
             let signer = await props.provider.getSigner()
             let chainid = (await props.provider.getNetwork())['chainId']
             let address = await signer.getAddress()
-            const items = await request.get(`/api/address/${address}/items`,{chainid:chainid})
+            let items = await request.get(`/api/address/${address}/items`,{chainid:chainid})
             console.log('collections of address',items,chainid,await props.provider.getNetwork())
+
+            // 检查所有的nft是否所有人正确
+            let nfts = {}
+            for(let item of items.data){
+                let ownerOk = await checkOwner(item.collection.address,item.tokenid,address)
+
+                if(!nfts[item.collection.address]){
+                    if(ownerOk){
+                        nfts[item.collection.address] = [{'meta':JSON.parse(item.meta),'owner':address,'tokenid':item.tokenid,'chainid':chainid}]
+                    }else{
+                        nfts[item.collection.address] = []
+                    }
+                }else{
+                    if(ownerOk){
+                        nfts[item.collection.address].push({'meta':JSON.parse(item.meta),'owner':address,'tokenid':item.tokenid,'chainid':chainid})
+                    }
+                }
+            }
+
+            for(let nftAddr in nfts){
+                await request.post(`/collections/${nftAddr}/items`,{items:JSON.stringify(nfts[nftAddr]),owner:address,chainid:chainid})
+            }
+            items = await request.get(`/api/address/${address}/items`,{chainid:chainid})
+
             setNfts(items.data)
             setOwner(address)
             setChainid(chainid)
@@ -53,6 +77,13 @@ const Dex = props=>{
         const result = await request.get(uri)
         console.log(uri,'uri',result)
         return result
+    }
+
+    async function checkOwner(nftAddr,index,owner){
+        const contract = new ethers.Contract(nftAddr,IERC721.abi,props.provider)
+        let _owner = await contract.ownerOf(index)
+        console.log("NFT owner",nftAddr,index,_owner,owner)
+        return _owner==owner
     }
 
     async function loadNft(nftAddr){
